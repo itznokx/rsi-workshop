@@ -1,1 +1,1 @@
-FLAG{ssti_j1nj4_r3nd3r_t3mpl4t3_str1ng_pwn3d}
+RSI{SST1_C0NC4T3N4T10N_15_FUN_f84729}
