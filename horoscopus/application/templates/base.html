@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Astral Signs{% endblock %}</title>
+  <title>{% block title %}Signos Astrais{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <div class="navbar">
-    <div class="brand">&#9733; ASTRAL SIGNS</div>
+    <div class="brand">&#9733; SIGNOS ASTRAIS</div>
     <nav>
-      <a href="{{ url_for('index') }}">Home</a>
-      <a href="{{ url_for('about') }}">About</a>
-      <a href="{{ url_for('horoscope') }}">Horoscope</a>
+      <a href="{{ url_for('index') }}">Início</a>
+      <a href="{{ url_for('about') }}">Sobre</a>
+      <a href="{{ url_for('horoscope') }}">Horóscopo</a>
     </nav>
   </div>
   <div class="page-wrap">
