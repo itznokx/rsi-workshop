@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Astral Signs - Home{% endblock %}
+{% block content %}
+  <h1 class="page-title">The Twelve Signs</h1>
+  <p class="page-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit — explore each constellation below.</p>
+
+  <div class="sign-grid">
+    {% for sign in signs %}
+    <div class="sign-card">
+      <svg class="sign-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#e8c766" stroke-width="1.5" opacity="0.5"/>
+        <text x="32" y="42" text-anchor="middle" font-size="30" fill="#e8c766">{{ sign.symbol }}</text>
+      </svg>
+      <div class="sign-name">{{ sign.name }}</div>
+      <div class="sign-range">{{ sign.range }}</div>
+      <p class="sign-desc">{{ sign.desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}
