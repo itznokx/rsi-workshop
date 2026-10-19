@@ -61,7 +61,7 @@ LOREM_ASCENDANTS = [
 
 BLOCKED_KEYWORDS = [
     "os", "import", "popen", "subprocess", "system",
-    "eval", "exec", "cat", "flag",
+    "eval", "exec", "cat", "flag", "config"
 ]
 
 def contains_blocked_keyword(value: str) -> bool:

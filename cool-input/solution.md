@@ -24,6 +24,8 @@ Podemos explorar a vulnerabilidade usando keys conhecidas do framework ou do pyt
 - {{__subclasses__()}}
 - {{config}}
 
+Essa última (config) nos retorna algo precioso. A Flag.
+
 ### 3 ( Identificando a Flag)
 
 A flag está "escondida" na propriedade config do APP ( Flask ) e, parando para observar, nota-se que a flag está em um dos items do dicionário config.
