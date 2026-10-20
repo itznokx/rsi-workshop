@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyNotes - Painel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- MENU LATERAL FIXO -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span>DailyNotes</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <button class="nav-tab active" onclick="switchTab('categorias', event)">
+                    <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                    Categorias
+                </button>
+                <button class="nav-tab" onclick="switchTab('noticias', event)">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    Notícias
+                </button>
+                <button class="nav-tab" onclick="switchTab('assinantes', event)">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1 0 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    Assinantes
+                </button>
+                <a href="{{ url_for('logout') }}" class="nav-tab logout">
+                    <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    Sair da Conta
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ÁREA CENTRAL COM HEADER -->
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="header-title">
+                    Painel Geral <span class="admin-badge">Acesso Interno</span>
+                </div>
+                <div class="user-profile">
+                    <span style="font-size: 14px; color: var(--text-secondary);">Olá, <strong>Administrador</strong></span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <!-- ROLAGEM EXCLUSIVA DO CONTEÚDO -->
+            <main class="content-body">
+
+                <!-- ABA CATEGORIAS -->
+                <div id="categorias" class="tab-pane active">
+                    <h1 class="page-title">Gerenciar Categorias</h1>
+                    
+                    <div class="admin-grid">
+                        <div class="admin-card">
+                            <h2>Cadastrar Categoria</h2>
+                            <form id="formNewCat" onsubmit="handleNewCat(event)">
+                                <div class="input-group">
+                                    <label for="cat-titulo">Título da Categoria</label>
+                                    <input type="text" id="cat-titulo" placeholder="Ex: Tecnologia, Esportes..." name="title" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Salvar Categoria</button>
+                            </form>
+                        </div>
+
+                        <div class="admin-card">
+                            <h2>Categorias Cadastradas</h2>
+                            <div class="data-list" id="catList">
+                                {% for category in categories %}
+                                <div class="data-item" id="cat-item-{{ category.id }}">
+                                    <span style="font-weight: 500;">{{ category.title }}</span>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory(`{{ category.id }}`, `{{ url_for('delcat', id=category.id) }}`)">Apagar</button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA NOTÍCIAS -->
+                <div id="noticias" class="tab-pane">
+                    <h1 class="page-title">Gerenciar Notícias</h1>
+                    
+                    <div class="admin-grid" style="grid-template-columns: 1fr;">
+                        <div class="admin-card">
+                            <h2>Cadastrar Nova Notícia</h2>
+                            <form id="formNewNews" onsubmit="handleNewNews(event)">
+                                <div class="input-group">
+                                    <label for="noticia-cat">Categoria Associada</label>
+                                    <select id="noticia-cat" name="category" required>
+                                        <option value="" disabled selected>Selecione uma categoria</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="noticia-titulo">Título</label>
+                                    <input type="text" id="noticia-titulo" name="title" placeholder="Título principal da matéria" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="noticia-autor">Autor</label>
+                                    <input type="text" id="noticia-autor" name="author" placeholder="Nome do jornalista ou redação" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="noticia-corpo">Corpo da Matéria</label>
+                                    <textarea id="noticia-corpo" name="body" placeholder="Escreva o texto completo da notícia aqui..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Publicar Notícia</button>
+                            </form>
+                        </div>
+
+                        <div class="admin-card">
+                            <h2>Todas as Notícias Cadastradas</h2>
+                            <div class="data-list" id="newsList">
+                                $ITEMS$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA ASSINANTES -->
+                <div id="assinantes" class="tab-pane">
+                    <h1 class="page-title">Assinantes da Newsletter</h1>
+                    
+                    <div class="admin-card" style="max-width: 800px;">
+                        <h2>Lista de E-mails Cadastrados</h2>
+                        <div class="data-list">
+                            {% for s in subscribers %}
+                            <div class="data-item">
+                                <span>{{ s.email }}</span>
+                                <span class="admin-badge">Ativo</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO/EDIÇÃO -->
+    <div id="newsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Visualizar Notícia</h2>
+                <button class="btn btn-secondary btn-sm" onclick="closeNewsModal()">✕ Fechar</button>
+            </div>
+            
+            <!-- Modo Visualização -->
+            <div id="viewMode">
+                <div style="margin-bottom: 16px;">
+                    <span class="data-meta">Categoria: <strong id="viewCat" style="color: var(--brand-highlight);"></strong> | Autor: <strong id="viewAuthor" style="color: var(--text-main);"></strong></span>
+                </div>
+                <h3 id="viewTitle" style="font-size: 22px; color: var(--text-main); margin-bottom: 16px;"></h3>
+                <p id="viewBody" style="color: var(--text-secondary); white-space: pre-wrap; margin-bottom: 28px; font-size: 15px; line-height: 1.8;"></p>
+                
+                <button class="btn btn-primary" onclick="toggleEditMode(true)">Editar Notícia</button>
+            </div>
+
+            <!-- Modo Edição (Com envio via AJAX) -->
+            <form id="editMode" style="display: none;" onsubmit="handleEditNews(event)">
+                <input type="hidden" id="edit-id" name="id">
+                
+                <div class="input-group">
+                    <label for="edit-cat">Categoria Associada</label>
+                    <select id="edit-cat" name="categoria" required>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit-title">Título</label>
+                    <input type="text" id="edit-title" name="title" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit-author">Autor</label>
+                    <input type="text" id="edit-author" name="author" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit-body">Corpo da Matéria</label>
+                    <textarea id="edit-body" name="body" style="min-height: 180px;" required></textarea>
+                </div>
+                
+                <div class="btn-group" style="margin-top: 24px;">
+                    <button type="submit" class="btn btn-primary" id="btnSaveEdit">Salvar Alterações</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleEditMode(false)">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE NAVEGAÇÃO E REQUISIÇÕES ASSÍNCRONAS (FETCH) -->
+    <script>
+        // 1. ALTERNAR ABAS
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // 2. ABRIR E FECHAR MODAL
+        function openNewsModal(buttonElement) {
+            const id = buttonElement.getAttribute('data-id');
+            const title = buttonElement.getAttribute('data-title');
+            const cat = buttonElement.getAttribute('data-cat');
+            const catId = buttonElement.getAttribute('data-cat-id');
+            const author = buttonElement.getAttribute('data-author');
+            const body = buttonElement.getAttribute('data-body');
+
+            document.getElementById('viewTitle').innerText = title;
+            document.getElementById('viewCat').innerText = cat;
+            document.getElementById('viewAuthor').innerText = author;
+            document.getElementById('viewBody').innerText = body;
+
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-title').value = title;
+            document.getElementById('edit-author').value = author;
+            document.getElementById('edit-body').value = body;
+
+            const selectCat = document.getElementById('edit-cat');
+            for(let i = 0; i < selectCat.options.length; i++) {
+                if(selectCat.options[i].value === catId) {
+                    selectCat.selectedIndex = i;
+                    break;
+                }
+            }
+
+            toggleEditMode(false);
+            document.getElementById('newsModal').style.display = 'flex';
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').style.display = 'none';
+        }
+
+        function toggleEditMode(isEditing) {
+            const viewMode = document.getElementById('viewMode');
+            const editMode = document.getElementById('editMode');
+            const modalTitle = document.getElementById('modalTitle');
+
+            if (isEditing) {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+                modalTitle.innerText = 'Editar Notícia';
+            } else {
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+                modalTitle.innerText = 'Visualizar Notícia';
+            }
+        }
+
+        // 3. APAGAR CATEGORIA VIA FETCH (SEM REDIRECIONAMENTO)
+        async function deleteCategory(id, deleteUrl) {
+            if (!confirm('Tem certeza que deseja deletar esta categoria?')) return;
+
+            try {
+                const response = await fetch(deleteUrl, { method: 'GET' });
+                if (response.ok) {
+                    const item = document.getElementById(`cat-item-${id}`);
+                    if (item) {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.9)';
+                        setTimeout(() => item.remove(), 250);
+                    }
+                } else {
+                    alert('Erro ao apagar categoria.');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                alert('Erro de conexão ao tentar apagar.');
+            }
+        }
+
+        // 4. SALVAR EDIÇÃO DA NOTÍCIA VIA FETCH (SEM REDIRECIONAMENTO)
+        async function handleEditNews(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const btn = document.getElementById('btnSaveEdit');
+            btn.disabled = true;
+
+            try {
+                const response = await fetch("{{ url_for('edit_new') }}", {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok && !response.redirected) {
+                    const id = document.getElementById('edit-id').value;
+                    const title = document.getElementById('edit-title').value;
+                    const selectEl = document.getElementById('edit-cat');
+                    const catId = selectEl.value;
+                    const cat = selectEl.options[selectEl.selectedIndex].text;
+                    const author = document.getElementById('edit-author').value;
+                    const body = document.getElementById('edit-body').value;
+
+                    // Atualiza a visualização do modal imediatamente
+                    document.getElementById('viewTitle').innerText = title;
+                    document.getElementById('viewCat').innerText = cat;
+                    document.getElementById('viewAuthor').innerText = author;
+                    document.getElementById('viewBody').innerText = body;
+
+                    // Atualiza os atributos data-* do botão da listagem
+                    const newsBtn = document.querySelector(`[data-id="${id}"]`);
+                    if (newsBtn) {
+                        newsBtn.setAttribute('data-title', title);
+                        newsBtn.setAttribute('data-cat', cat);
+                        newsBtn.setAttribute('data-cat-id', catId);
+                        newsBtn.setAttribute('data-author', author);
+                        newsBtn.setAttribute('data-body', body);
+
+                        const titleSpan = newsBtn.querySelector('.news-title');
+                        if (titleSpan) titleSpan.innerText = title;
+                    }
+
+                    // Alterna de volta para o modo de visualização e fecha o modal
+                    toggleEditMode(false);
+                    closeNewsModal();
+
+                    // Recarrega a página para re-renderizar os JOINs da template HTML se necessário
+                    location.reload(); 
+                } else {
+                    alert('Erro ao atualizar a notícia.');
+                }
+            } catch (error) {
+                console.error('Erro na atualização:', error);
+                alert('Erro de conexão com o servidor.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // 5. CADASTRAR CATEGORIA VIA FETCH
+        async function handleNewCat(event) {
+            event.preventDefault();
+            const form = event.target;
+            const catInput = document.getElementById('cat-titulo');
+            const title = catInput.value.trim();
+
+            if (!title) return;
+
+            try {
+                const response = await fetch("{{ url_for('newcat') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title: title })
+                });
+
+                if (response.ok && !response.redirected) {
+                    const data = await response.json();
+                    const catList = document.getElementById('catList');
+
+                    if (catList && data.id) {
+                        // Verifica se já não existe na lista antes de adicionar
+                        if (!document.getElementById(`cat-item-${data.id}`)) {
+                            const newCatItem = document.createElement('div');
+                            newCatItem.className = 'data-item';
+                            newCatItem.id = `cat-item-${data.id}`;
+
+                            // URL dinâmica para deleção
+                            const deleteUrl = `/delcat?id=${data.id}`;
+
+                            newCatItem.innerHTML = `
+                                <span style="font-weight: 500;">${data.title}</span>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="deleteCategory('${data.id}', '${deleteUrl}')">Apagar</button>
+                            `;
+
+                            catList.appendChild(newCatItem);
+
+                            // Adiciona a nova categoria aos dropdowns de seleção no formulário de notícias
+                            const noticiaCatSelect = document.getElementById('noticia-cat');
+                            const editCatSelect = document.getElementById('edit-cat');
+
+                            if (noticiaCatSelect) {
+                                noticiaCatSelect.insertAdjacentHTML('beforeend', `<option value="${data.id}">${data.title}</option>`);
+                            }
+                            if (editCatSelect) {
+                                editCatSelect.insertAdjacentHTML('beforeend', `<option value="${data.id}">${data.title}</option>`);
+                            }
+                        }
+                    }
+
+                    form.reset();
+                } else {
+                    let msg = 'Erro ao criar categoria.';
+                    try {
+                        const errorData = await response.json();
+                        msg = errorData.error || msg;
+                    } catch (_) {}
+                    alert(msg);
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                alert('Erro de conexão ao criar categoria.');
+            }
+        }
+
+        // 6. CADASTRAR NOTÍCIA VIA FETCH
+        async function handleNewNews(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("{{ url_for('news') }}", {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // O POST de /noticia responde com redirect para /admin (esperado),
+                // então aqui só checamos response.ok.
+                if (response.ok) {
+                    form.reset();
+                    location.reload(); // Atualiza dados sem quebrar rotas
+                } else {
+                    alert('Erro ao cadastrar notícia.');
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+    </script>
+</body>
+</html>

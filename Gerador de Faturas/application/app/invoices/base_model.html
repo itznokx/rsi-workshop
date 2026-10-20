@@ -1,0 +1,56 @@
+<header class="invoice-header">
+    <div>
+    <span class="invoice-brand">INVOICE SYSTEM</span>
+    <h1>FATURA</h1>
+    <p>Documento de cobrança</p>
+    </div>
+
+    <div class="invoice-number">
+    <span>Nº DA FATURA</span>
+    <strong>INV-2026-001</strong>
+    <span class="invoice-status">PENDENTE</span>
+    </div>
+</header>
+
+<section class="invoice-customer">
+    <span class="invoice-label">FATURAR PARA</span>
+    <h2>{{ invoice.customer }}</h2>
+</section>
+
+<section class="invoice-details">
+    <table>
+    <thead>
+        <tr>
+        <th>DESCRIÇÃO DO SERVIÇO</th>
+        <th class="text-right">VALOR</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <td>{{ invoice.service }}</td>
+        <td class="text-right">
+            R$ {{ "%.2f"|format(invoice.amount|float) }}
+        </td>
+        </tr>
+    </tbody>
+    </table>
+</section>
+
+<section class="invoice-total">
+    <span>VALOR TOTAL</span>
+    <strong>
+    R$ {{ "%.2f"|format(invoice.amount|float) }}
+    </strong>
+</section>
+
+{% if invoice.custom_message %}
+    <section class="invoice-message">
+    <h3>Mensagem ao cliente</h3>
+    <p>{{ invoice.custom_message }}</p>
+    </section>
+{% endif %}
+
+<footer class="invoice-footer">
+    <p>Obrigado pela preferência!</p>
+    <span>Fatura gerada eletronicamente.</span>
+</footer>

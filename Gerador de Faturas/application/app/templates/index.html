@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Faturas - Criar Fatura</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">Gaffer Invoices</div>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="/" class="nav-link active">Criar Fatura</a></li>
+          <li><a href="/templates" class="nav-link">Modelos de Faturas</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Criar Fatura</h1>
+      </div>
+
+      <div class="card">
+        <form action="/generate" method="POST">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="client_name">Nome do Cliente</label>
+              <input type="text" id="client_name" name="customer" class="form-control" placeholder="ex: King of Gondor" required>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Descrição do Serviço</label>
+              <input type="text" id="description" name="service" class="form-control" placeholder="ex: Consultoria de Segurança" required>
+            </div>
+
+            <div class="form-group">
+              <label for="amount">Valor ($)</label>
+              <input type="number" step="0.01" id="amount" name="amount" class="form-control" placeholder="0.00" required>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="custom_message">Mensagem Personalizada</label>
+              <textarea id="custom_message" name="custom_message" class="form-control" placeholder="Digite uma mensagem personalizada para incluir na fatura..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Gerar Fatura</button>
+        </form>
+      </div>
+
+      <!-- Exibição da Fatura Gerada (Renderizada pós-envio) -->
+      {% if invoice %}
+      <div class="card">
+        <h2 style="font-size: 1.1rem;">Fatura Gerada</h2>
+        <div class="invoice-preview">
+          <header>
+            <h3>Fatura para: {{ invoice.customer }}</h3>
+            <span class="status-badge sent">Enviada</span>
+          </header>
+          <div class="invoice-body">
+            <p><strong>Descrição:</strong> {{ invoice.service }}</p>
+            <p><strong>Valor:</strong> ${{ invoice.amount }} USD</p>
+            <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border-color);">
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Mensagem:</p>
+            <div>
+              <!-- Ponto de entrada SSTI em Code Context -->
+              $custom_message_input$
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %} 
+
+    </main>
+  </div>
+</body>
+</html>
